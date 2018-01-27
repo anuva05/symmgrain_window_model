@@ -1,0 +1,7 @@
+the file symm_grain_matlab.f will, in each iteration, write the stress/strain fields to files. then it will call matlab, which takes as input the stress/strain files, c0,s0 files and a preset downsample factor. It also needs as input the size of the problem. 
+Another input is the type of window, but for now we can fix it as the tukey window. The matlab file will also need the microstructure file. 
+
+one key difference from evp_serial.f - that code used to compress and rconstruct sg11 before the FFT even happened. For the new code symm_Grain_matlab_simple.f will perform the convolution and then put back the convolved output back into fortran.hence the output of this code is the time domain deltaE which must then be added to strain and  used to update stress.
+
+the code symm_Grain_matlab_models.f will use models before and after the fft.
+ 

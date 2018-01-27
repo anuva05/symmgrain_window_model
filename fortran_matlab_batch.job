@@ -1,0 +1,45 @@
+#!/bin/bash
+#SBATCH -J fortran_win_only     #job name
+##SBATCH -o fortran_256Cubed.%j.out  #output and error file name
+#SBATCH --mem=128GB         #request nodes
+#SBATCH -t 2:00:00          # designate max run time
+#SBATCH -p LM                # designate queue
+##SBATCH -A ms4s86p           # charge job to this project
+
+set -x 
+
+##INPUTDIR_BASE=/pylon1/pscstaff/anirban/anuva_kulkarni
+##PROB=Fortran_code
+INPUTDIR_BASE=/pylon5/ms4s86p/kulkarna
+PROB=window_model
+WORKDIR_BASE=$LOCAL
+
+############## End of usual input ##############
+##############Normally don not need to change stuff below ########
+
+hostname
+scontrol show job $SLURM_JOB_ID | grep mem
+
+cd ${INPUTDIR_BASE}/${PROB}
+module load matlab
+ifort -mcmodel medium -shared-intel -o p128.exe singleIterSymm.f
+WORKDIR=${WORKDIR_BASE}/${PROB}.$SLURM_JOB_ID
+mkdir -p $WORKDIR
+cp p128.exe $WORKDIR
+cp fft.* $WORKDIR
+cp *.sx $WORKDIR
+cp *.FFT $WORKDIR
+cp *.m $WORKDIR
+cp *.mat $WORKDIR
+cd $WORKDIR
+ls -al
+./p128.exe
+matlab -nodisplay < get_stress.m 
+ls -ltr
+cd $LOCAL
+cp -r ${PROB}.$SLURM_JOB_ID $SLURM_SUBMIT_DIR
+
+
+
+
+
