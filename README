@@ -1,7 +1,27 @@
-the file symm_grain_matlab.f will, in each iteration, write the stress/strain fields to files. then it will call matlab, which takes as input the stress/strain files, c0,s0 files and a preset downsample factor. It also needs as input the size of the problem. 
-Another input is the type of window, but for now we can fix it as the tukey window. The matlab file will also need the microstructure file. 
+This code acts as a plugin to the ElastoViscoPlastic (EVP) formulation Fortran code. It performs convolution in MATLAB for the required convolution kernel, and
+returns control back to Fortran after computation is complete. In each iteration of the Fortran code, the updated stress/strain fields are written to files.
 
-one key difference from evp_serial.f - that code used to compress and rconstruct sg11 before the FFT even happened. For the new code symm_Grain_matlab_simple.f will perform the convolution and then put back the convolved output back into fortran.hence the output of this code is the time domain deltaE which must then be added to strain and  used to update stress.
 
-the code symm_Grain_matlab_models.f will use models before and after the fft.
- 
+If using this code, please cite: 
+Massive Scaling of MASSIF: Algorithm Development and Analysis for Simulation on GPUs
+Bibtex:
+@inproceedings{10.1145/3394277.3401857,
+author = {Kulkarni, Anuva and Kova\v{c}evi\'{c}, Jelena and Franchetti, Franz},
+title = {Massive Scaling of MASSIF: Algorithm Development and Analysis for Simulation on GPUs},
+year = {2020},
+isbn = {9781450379939},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3394277.3401857},
+doi = {10.1145/3394277.3401857},
+abstract = {Micromechanical Analysis of Stress-Strain Inhomogeneities with Fourier transforms (MASSIF) is a large-scale Fortran-based differential equation solver used to study local stresses and strains in materials. Due to its prohibitive memory requirements, it is extremely difficult to port the code to GPUs with small on-device memory. In this work, we present an algorithm design that uses domain decomposition with approximate convolution, which reduces memory footprint to make the MASSIF simulation feasible on distributed GPU systems. A first-order performance model of our method estimates that compression and multi-resolution sampling strategies can enable domain computation within GPU memory constraints for 3D grids larger than those simulated by the current state-of-the-art Fortran MPI implementation. The model analysis also provides an insight into design requirements for further scalability. Lastly, we discuss the extension of our method to irregular domain decomposition and challenges to be tackled in the future.},
+booktitle = {Proceedings of the Platform for Advanced Scientific Computing Conference},
+articleno = {13},
+numpages = {10},
+keywords = {Domain Decomposition, GPU, Algorithms, Fast Fourier Transforms},
+location = {Geneva, Switzerland},
+series = {PASC '20}
+}
+
+
+https://dl.acm.org/doi/pdf/10.1145/3394277.3401857
